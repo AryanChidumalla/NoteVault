@@ -1,25 +1,35 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import SignUp from './SignUp';
+import SignIn from './SignIn';
+import { CheckUser } from './firebaseComponents';
+import Dashboard from './Dashboard';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [SignUpChecker, setSignUpChecker] = useState(true)
+  const [SignInChecker, setSignInChecker] = useState(false)
+
+  console.log()
+
+  useEffect(() => {
+    CheckUser(setSignInChecker)
+  }, [])
+
+  if (SignInChecker) {
+    return (
+      <Dashboard/>
+    )
+  } else {
+    if (SignUpChecker) {
+      return (
+        <SignUp setSignUpChecker={setSignUpChecker} setSignInChecker={setSignInChecker}/>
+      )
+    } else {
+      return (
+        <SignIn setSignUpChecker={setSignUpChecker} setSignInChecker={setSignInChecker}/>
+      )
+    }
+  }
 }
 
 export default App;
