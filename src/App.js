@@ -1,35 +1,22 @@
-import { useEffect, useState } from 'react';
-import './App.css';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+
 import SignUp from './SignUp';
 import SignIn from './SignIn';
-import { CheckUser } from './firebaseComponents';
 import Dashboard from './Dashboard';
 
+import './App.css';
+
 function App() {
-  const [SignUpChecker, setSignUpChecker] = useState(true)
-  const [SignInChecker, setSignInChecker] = useState(false)
-
-  console.log()
-
-  useEffect(() => {
-    CheckUser(setSignInChecker)
-  }, [])
-
-  if (SignInChecker) {
-    return (
-      <Dashboard/>
-    )
-  } else {
-    if (SignUpChecker) {
-      return (
-        <SignUp setSignUpChecker={setSignUpChecker} setSignInChecker={setSignInChecker}/>
-      )
-    } else {
-      return (
-        <SignIn setSignUpChecker={setSignUpChecker} setSignInChecker={setSignInChecker}/>
-      )
-    }
-  }
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Navigate to="/dashboard"/>}/>
+        <Route path='/dashboard' element={<Dashboard/>}/>
+        <Route path='/signin' element={<SignIn/>}/>
+        <Route path='/signup' element={<SignUp/>}/>
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App;

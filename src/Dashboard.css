@@ -236,10 +236,6 @@ textarea {
 }
 
 .FetchedDataNoteContainer {
-    margin-bottom: 40px;
-}
-
-.FetchedDataNoteContainer {
     display: flex;
     gap: 5px;
     flex-direction: column;
@@ -252,6 +248,7 @@ textarea {
     height: fit-content;
 
     padding: 20px;
+    margin-bottom: 40px;
 
     color: #04364A;
     border-radius: 20px;
@@ -482,7 +479,7 @@ textarea {
     }
 
     .AddNoteContainer {
-        width: 90%;
+        width: 80%;
     }
 
     .AddNoteComponent textarea {

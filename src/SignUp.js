@@ -1,13 +1,36 @@
-import { useState } from 'react';
-import CreateUser from './firebaseComponents';
-import { CheckUser } from './firebaseComponents';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { CreateUser, checkUserStatus } from './firebaseComponents';
+
+import './Register.css';
 
 import Logo from './img/Logo.svg'
 import BgImg from './img/BackgroundImage.png';
 
-import './Register.css';
+function SignUp() {
+    const [showSignUpPage, setShowSignUpPage] = useState(false)
 
-function SignUp({setSignUpChecker, setSignInChecker}) {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        checkUserStatus().then((isUserSignedIn) => {
+            if (isUserSignedIn) {
+                navigate('/dashboard')
+            } else {
+                setShowSignUpPage(true)
+            }
+        })   
+    }, [navigate])
+
+    if (showSignUpPage) {
+        return (
+            <SignUpDisplay/>
+        )
+    }
+}
+
+function SignUpDisplay() {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -15,52 +38,57 @@ function SignUp({setSignUpChecker, setSignInChecker}) {
         confirmPwd: ''
     })
 
-    const [errorMsgText, setErrorMsgText] = useState('Error msg')
-    const [errorMsgBool, setErrorMsgBool] = useState(false)
+    const [errorMsg, setErrorMsg] = useState({bool: false, text: 'Error'})
+
+    const navigate = useNavigate()
 
     function SubmitSignUpForm(e) {
         e.preventDefault()
-        setErrorMsgText(null)
         let flag = 0
 
         if (formData.username === '' || formData.email === '' || formData.password === '' || formData.confirmPwd === '') {
             flag = 1
-            setErrorMsgText('Please fill all the detatils')
-            setErrorMsgBool(true)
+
+            setErrorMsg({bool: true, text: 'Please fill all the detatils'})
         } else if (formData.password !== formData.confirmPwd) {
             flag = 1
-            setErrorMsgText('Passwords do not match')
-            setErrorMsgBool(true)
+
+            setErrorMsg({bool: true, text: 'Passwords do not match'})
         }
 
         if (flag === 0) {
-            CreateUser(formData.username, formData.email, formData.password)
-            CheckUser(setSignInChecker)
-        }
-    }
+            if (CreateUser(formData.username, formData.email, formData.password)) {
+                navigate('/dashboard')
+            }
 
-    function DisplayErrorMsg() {
-        return (
-            <div className={"DisplayErrorMsgContainer " + (errorMsgBool ? 'ErrorMsgVisible' : 'ErrorMsgNotVisible')}>
-                {errorMsgText}
-            </div>
-        )
+            CreateUser(formData.username, formData.email, formData.password)
+                .then(function(bool) {
+                    if (bool) {
+                        navigate('/dashboard')
+                    } else {
+                        setErrorMsg({bool: true, text: 'Error Occurred'})
+                    }
+                })
+                .catch(function(error) {
+                    console.log(error)
+                })
+        }
     }
 
     return (
         <div className="RegisterContainer">
             <div className='LogoContainer'>
-                <img src={Logo}/> NoteValut
+                <img alt='Logo' src={Logo}/> NoteValut
             </div>
             <div className='Split RegisterImageContainer'>
                 <div className='Centered'>
-                    <img src={BgImg} alt='Image'/>
+                    <img alt='Background Img' src={BgImg}/>
                 </div>
             </div>
 
             <div className='Split RegisterFormContainer'>
                 <div className='Centered'>
-                    <h1>Create Account</h1>
+                    <h2>Create Account</h2>
                     <form className='RegisterForm' onSubmit={SubmitSignUpForm}>
                         <input placeholder='Username' type='text' value={formData.username} onChange={(e) => {setFormData({...formData, username: e.target.value})}}/>
                         <input placeholder='Email' type='email' value={formData.email} onChange={(e) => {setFormData({...formData, email: e.target.value})}}/>
@@ -73,11 +101,13 @@ function SignUp({setSignUpChecker, setSignInChecker}) {
 
                     <div className='GoToSignIn'>
                         <div>
-                            Already have an account? <span onClick={() => {setSignUpChecker(false)}}>Sign In</span>
+                            Already have an account? <span onClick={() => {navigate('/signin')}}>Sign In</span>
                         </div>
                     </div>
 
-                    <DisplayErrorMsg/>
+                    <div className={"DisplayErrorMsgContainer " + (errorMsg.bool ? 'ErrorMsgVisible' : 'ErrorMsgNotVisible')}>
+                        {errorMsg.text}
+                    </div>
                 </div>
             </div>
         </div>

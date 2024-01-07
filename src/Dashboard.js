@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AddNoteToDB, LogOutUser, fetchData, GetUserDataFromDB, UpdateNote, DeleteNote } from './firebaseComponents';
+import { AddNoteToDB, LogOutUser, fetchData, GetUserDataFromDB, UpdateNote, DeleteNote, checkUserStatus } from './firebaseComponents';
 
 import Logo from './img/Logo.svg'
 import ProfileIcon from './img/ProfileIcon.svg'
@@ -10,133 +10,57 @@ import DeleteBtn from './img/DeleteBtn.svg'
 import useScreenSize from './useScreenSize';
 
 import './Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+    const [showDashboard, setShowDashboard] = useState(false)
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        checkUserStatus().then((isUserSignedIn) => {
+            if (isUserSignedIn) {
+                setShowDashboard(true)
+            } else {
+                navigate('/signup')
+            }
+        })   
+    }, [navigate])
+
+    if (showDashboard) {
+        return (
+            <DashboardDisplay/>
+        )
+    }
+}
+
+function DashboardDisplay() {
     const [UserData, setUserData] = useState(null)
     const [ShowUserData, setShowUserData] = useState(false)
     const [TextareaOnFocus, setTextareaOnFocus] = useState(false)
-    const [Note, setNote] = useState({
-        title: '',
-        description: ''
-    })
+    const [Note, setNote] = useState({title: '', description: ''})
     const [FetchData, setFetchData] = useState(null)
     const [UpdateState, setUpdateState] = useState(false)
     const [UpdateValues, setUpdateValues] = useState('')
 
-    const screenSize = useScreenSize();
+    const screenSize = useScreenSize()
+    const navigate = useNavigate()
 
     useEffect(() => {
-        GetUserDataFromDB().then(function(result) {
-            setUserData(result)
+        GetUserDataFromDB()
+        .then(function(result) {
+            if (result !== null) {
+                setUserData(result)
+            } 
         })
-    }, [])
+        .catch(function(error) {
+            console.log(error)
+        })
 
-    function HandleAddNote() {
-        // AddNoteToDB(Note)
-        // const init = {
-        //     Title: '',
-        //     Description: ''
-        // }
-
-        // setNote(init)
-        // console.log(Note)
-    }
-
-    useEffect(() => {
         fetchData(setFetchData)
     }, [])
 
     function DisplayFetchedData() {
-        // console.log(FetchData)
-
-        let temp = FetchData
-        // console.log(temp)
-
-        if (temp !== null) {
-            temp.sort(function(x, y) {
-                let Date1Array = x.Date.split('/')
-                let Date2Array = y.Date.split('/')
-
-                let Time1Array = x.Time.split(' ')
-                let Time2Array = y.Time.split(' ')
-                
-                let Time1SubArray = Time1Array[0].split(':')
-                let Time2SubArray = Time2Array[0].split(':')
-
-                if (Date1Array[2] > Date2Array[2]) {
-                    return -1
-                }
-
-                if (Date1Array[2] < Date2Array[2]) {
-                    return 1
-                }
-
-                if (Date1Array[2] === Date2Array[2]) {
-                    if (Date1Array[1] > Date2Array[1]) {
-                        return -1
-                    }
-    
-                    if (Date1Array[1] < Date2Array[1]) {
-                        return 1
-                    }
-
-                    if (Date1Array[1] === Date2Array[1]) {
-                        if (Date1Array[0] > Date2Array[0]) {
-                            return -1
-                        }
-        
-                        if (Date1Array[0] < Date2Array[0]) {
-                            return 1
-                        }
-
-                        if (Date1Array[0] === Date2Array[0]) {
-                            if (Time1Array[1] === 'AM' && Time2Array[1] === 'PM') {
-                                return 1
-                            }
-            
-                            if (Time1Array[1] === 'PM' && Time2Array[1] === 'AM') {
-                                return  -1
-                            }
-            
-                            if (Time1Array[1] === Time2Array[1]) {
-                                if (Time1SubArray[0] > Time2SubArray[0]) {
-                                    return -1
-                                }
-                
-                                if (Time1SubArray[0] < Time2SubArray[0]) {
-                                    return 1
-                                }
-                
-                                if (Time1SubArray[0] === Time2SubArray[0]) {
-                                    if (Time1SubArray[1] > Time2SubArray[1]) {
-                                        return -1
-                                    }
-                    
-                                    if (Time1SubArray[1] < Time2SubArray[1]) {
-                                        return 1
-                                    }
-                
-                                    if (Time1SubArray[1] === Time2SubArray[1]) {
-                                        if (Time1SubArray[2] > Time2SubArray[2]) {
-                                            return -1
-                                        }
-                        
-                                        if (Time1SubArray[2] < Time2SubArray[2]) {
-                                            return 1
-                                        }
-
-                                        // if (Time1SubArray[2] === Time2SubArray[2]) {
-                                        //     return 0
-                                        // } 
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            })
-        }
-
         let columnNum
 
         let MasonryLayout
@@ -189,7 +113,7 @@ function Dashboard() {
                                         <button onClick={(e) => {
                                             DeleteNote(obj)
                                             fetchData(setFetchData)
-                                        }}><img src={DeleteBtn}/></button>
+                                        }}><img alt='Delete' src={DeleteBtn}/></button>
                                     </div>
                                 </div>                                    
                             ))}
@@ -200,30 +124,38 @@ function Dashboard() {
         }
     }
 
+    function logOutBtnHandler() {
+        LogOutUser().then((bool) => {
+            if (bool) {
+                navigate('/signup')
+            }
+        })
+    }
+
     function DisplayUserData() {
         if (ShowUserData) {
             return (
                 <div className='UserDataContainer'>
                     <button>
-                        <img src={ProfileIcon} onClick={() => {setShowUserData(true)}}/>
+                        <img alt='Profile' src={ProfileIcon} onClick={() => {setShowUserData(true)}}/>
                     </button>
 
                     <div className='UserData'>
                         <div className='ExitUserData'>
                             <button onClick={() => {setShowUserData(false)}}>
-                                <img src={ExitBtn}/>
+                                <img alt='Exit' src={ExitBtn}/>
                             </button>
                         </div>
                         <div className='UserDataSubContainer'>
                             <div className='UserDataEmail'>
                                 {UserData.email}
                             </div>
-                            <img src={ProfileIcon}/>
+                            <img alt='Profile' src={ProfileIcon}/>
                             <div className='UserDataUsername'>
-                                Hi {UserData.username}!
+                                Hi {UserData.displayName}!
                             </div>
-                            <button className='UserDataLogOutBtn' onClick={() => {LogOutUser()}}>
-                                Log Out <img src={SignOutIcon}/>
+                            <button className='UserDataLogOutBtn' onClick={logOutBtnHandler}>
+                                Log Out <img alt='Log Out' src={SignOutIcon}/>
                             </button>
                         </div>
                     </div>
@@ -235,7 +167,7 @@ function Dashboard() {
             return (
                 <div className='UserDataContainer'>
                     <button>
-                        <img src={ProfileIcon} onClick={() => {setShowUserData(true)}}/>
+                        <img alt='Profile' src={ProfileIcon} onClick={() => {setShowUserData(true)}}/>
                     </button>
                 </div>
             )
@@ -246,7 +178,7 @@ function Dashboard() {
         <div className="DashboardContainer">
             <div className="DashboardHeader">
                 <div>
-                    <img src={Logo}/>   
+                    <img alt='Logo' src={Logo}/>   
                     NoteVault
                 </div>
                 <DisplayUserData/>
