@@ -22,7 +22,7 @@ function Dashboard() {
             if (isUserSignedIn) {
                 setShowDashboard(true)
             } else {
-                navigate('/signup')
+                navigate('/register')
             }
         })   
     }, [navigate])

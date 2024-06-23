@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
 
+body {
+	overflow: hidden;
+}
+
 .body {
     background: #f6f5f7;
 	display: flex;
@@ -189,4 +193,34 @@
 .button:hover::after {
 	visibility: visible;
 	transform: scale(100) translateX(2px);
+}
+
+@media only screen and (max-width: 900px) {
+	.container {
+		width: 90%;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.container.rightPanelActive .signInContainer {
+		transform: translateX(-150%);
+	}
+
+	.formContainer form {
+		display: flex;
+		flex-direction: column;
+	}
+	
+	.signUpContainer {
+		left: -100%;
+		width: 100%;
+	}
+
+	.signInContainer {
+		width: 100%;
+	}
+
+	.container {
+		padding: 20px 0px;
+	}
 }
