@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 
 import './App.css';
 import ErrorPage from './ErrorPage';
+import Register from './Register';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path='/dashboard' element={<Dashboard/>}/>
         <Route path='/signin' element={<SignIn/>}/>
         <Route path='/signup' element={<SignUp/>}/>
+        <Route path='/register' element={<Register/>}/>
       </Routes>
     </BrowserRouter>
   )
