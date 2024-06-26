@@ -127,7 +127,7 @@ function DashboardDisplay() {
     function logOutBtnHandler() {
         LogOutUser().then((bool) => {
             if (bool) {
-                navigate('/signup')
+                navigate('/register')
             }
         })
     }

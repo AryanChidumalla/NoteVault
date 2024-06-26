@@ -15,8 +15,8 @@ function App() {
         <Route path='*' element={<ErrorPage/>} />
         <Route path='/' element={<Navigate to="/dashboard"/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
-        <Route path='/signin' element={<SignIn/>}/>
-        <Route path='/signup' element={<SignUp/>}/>
+        {/* <Route path='/signin' element={<SignIn/>}/>
+        <Route path='/signup' element={<SignUp/>}/> */}
         <Route path='/register' element={<Register/>}/>
       </Routes>
     </BrowserRouter>
