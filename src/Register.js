@@ -124,6 +124,7 @@ function Register() {
                                     label="Password"
                                     sx={{ m: 1 }}
                                     size="small"
+                                    type="password"
                                     onChange={(e) => setPassword(e.target.value)}
                                 />                                                                                    
                             </ThemeProvider>
@@ -158,6 +159,7 @@ function Register() {
                                         label="Password"
                                         sx={{ m: 1 }}
                                         size="small"
+                                        type="password"
                                         onChange={(e) => setPassword(e.target.value)}
                                     />                  
                                     <TextField
@@ -165,6 +167,7 @@ function Register() {
                                         label="Confirm Password"
                                         sx={{ m: 1 }}
                                         size="small"
+                                        type="password"
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />                                                                  
                                 </ThemeProvider>
@@ -234,6 +237,7 @@ function Register() {
                                         label="Password"
                                         sx={{ m: 1 }}
                                         size="small"
+                                        type="password"
                                         onChange={(e) => setPassword(e.target.value)}
                                     />                                                                                    
                                 </ThemeProvider>
@@ -272,6 +276,7 @@ function Register() {
                                         label="Password"
                                         sx={{ m: 1 }}
                                         size="small"
+                                        type="password"
                                         onChange={(e) => setPassword(e.target.value)}
                                     />                  
                                     <TextField
@@ -279,6 +284,7 @@ function Register() {
                                         label="Confirm Password"
                                         sx={{ m: 1 }}
                                         size="small"
+                                        type="password"
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />                                                                  
                                 </ThemeProvider>
