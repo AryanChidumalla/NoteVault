@@ -41,13 +41,9 @@ function Register() {
     function handleSignIn(e) {
         e.preventDefault()
 
-        console.log(e)
-
         let flag = 0
 
         if (email === '' || password === '') {
-            console.log('hello')
-
             flag = 1
             setErrorMsg({bool: true, type: 'warning', text: 'Please fill all the detatils'})
             setOpen(true)
