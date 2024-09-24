@@ -139,6 +139,8 @@
     background-color: #EAF1FB;
     border-radius: 10px;
 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
     z-index: 6;
 }
 
@@ -180,7 +182,7 @@
     outline: none;
     background: none;
 
-    font-size: 16px;
+    /* font-size: 16px; */
     font-family: 'Poppins';
 
     width: 100%;

@@ -1,0 +1,231 @@
+.RegisterContaienr {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  z-index: 10;
+}
+
+.RegisterSubContainer {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--soft-white);
+  border: 2px solid var(--soft-black);
+  border-radius: 5px;
+}
+
+.RegisterFormSignUpContainer {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  left: 0;
+  transition: transform 1s ease;
+}
+
+.RegisterFormSignUpContainer.Hidden {
+  transform: translateX(-100%);
+}
+
+.RegisterFormContentContainer {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  left: 0;
+  transition: transform 1s ease;
+  overflow: hidden;
+  background-color: var(--light-aqua);
+}
+
+.RegisterFormContentContainer.Right {
+  transform: translateX(100%);
+  border-left: 2px solid var(--soft-black);
+}
+
+.RegisterFormContentContainer.Left {
+  border-right: 2px solid var(--soft-black);
+}
+
+.RegisterFormContentContainerSignInContent {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  transition: transform 1s ease;
+
+  padding: 80px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.RegisterFormContentContainerSignInContent.GoLeft {
+  transform: translateX(-200%);
+}
+
+.RegisterFormContentContainerSignUpContent {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  right: 0;
+  transition: transform 1s ease;
+
+  padding: 80px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.RegisterFormContentContainerSignUpContent.GoRight {
+  transform: translateX(200%);
+}
+
+.RegisterFormSignInContainer {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  right: 0;
+  transition: transform 1s ease;
+}
+
+.RegisterFormSignInContainer.Hidden {
+  transform: translateX(100%);
+}
+
+.RegisterFormTitle {
+  font-size: var(--heading-2);
+  font-weight: var(--bold);
+}
+
+.RegisterFormWelcomeText {
+  font-size: var(--body-text);
+  font-weight: var(--regular);
+}
+
+.RegisterFormLinkTo {
+  font-size: var(--body-text);
+  font-weight: var(--regular);
+}
+
+.RegisterFormLinkTo span {
+  cursor: pointer;
+}
+
+.RegisterFormContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  padding: 80px;
+}
+
+.MobileRegisterContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  z-index: 10;
+}
+
+.MobileRegisterSubContainer {
+  position: relative;
+  width: 60%;
+  height: 80%;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--light-aqua);
+  border: 2px solid var(--soft-black);
+  border-radius: 5px;
+  flex-direction: column;
+}
+
+.MobileRegisterSubContainerTitle {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--heading-2);
+  font-weight: var(--bold);
+}
+
+.MobileRegisterFormContainer {
+  position: relative;
+  width: 100%;
+  height: 80%;
+  display: flex;
+}
+
+.MobileRegisterSignUpFormContainer,
+.MobileRegisterSignInFormContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s ease;
+  background-color: var(--soft-white);
+  border-top: 2px solid var(--soft-black);
+  border-radius: 20px 0px 0px 0px;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+  align-items: center;
+}
+
+.MobileRegisterSignUpFormContainer.GoLeft {
+  transform: translateX(-100%);
+}
+
+.MobileRegisterSignInFormContainer {
+  right: 0;
+  border-radius: 0px 20px 0px 0px;
+}
+
+.MobileRegisterSignInFormContainer.GoRight {
+  transform: translateX(100%);
+}
+
+@media screen and (max-width: 600px) {
+  .MobileRegisterSubContainer {
+    width: 80%;
+    height: 80%;
+  }
+
+  .MobileRegisterSignUpFormContainer,
+  .MobileRegisterSignInFormContainer {
+    padding: 80px 40px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .MobileRegisterSubContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
