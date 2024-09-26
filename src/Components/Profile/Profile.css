@@ -1,0 +1,54 @@
+.ProfileContainer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: var(--soft-black);
+}
+
+.ProfileOverlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--soft-black);
+    opacity: 50%;
+    z-index: -1;
+}
+
+.ProfileSubContainer {
+    background-color: var(--soft-white);
+    padding: 40px;
+    min-width: 40%;
+    min-height: 40%;
+    border: 2px solid var(--soft-black);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ProfileSubContainerExitBar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ProfileContainer button {
+    width: fit-content;
+}
+
+.ProfileSubCotainerTitle {
+    font-size: var(--heading-2);
+    font-weight: var(--bold);
+}
+
+.ProfileSubCotainerGreetings {
+    font-size: var(--heading-3);
+    font-weight: var(--bold);
+}

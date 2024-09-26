@@ -1,0 +1,14 @@
+.NavBarContainer {
+    background-color: var(--light-aqua);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--soft-black);
+}
+
+.NavBarTitle {
+    color: var(--soft-black);
+    font-size: var(--heading-1);
+    font-weight: var(--bold);
+}

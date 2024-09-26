@@ -13,8 +13,8 @@
 
 .RegisterSubContainer {
   position: relative;
-  width: 900px;
-  height: 600px;
+  width: 80%;
+  height: 80%;
   display: flex;
   overflow: hidden;
   background-color: var(--soft-white);

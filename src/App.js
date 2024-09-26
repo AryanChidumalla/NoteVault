@@ -5,32 +5,35 @@ import ErrorPage from "./Pages/Error/ErrorPage";
 import Register from "./Pages/Auth/Register";
 
 import "./App.css";
-import { useContext } from "react";
-import { AuthContext } from "./context/context";
+import { useEffect, useState } from "react";
 import { LoadingScreen } from "./Components/loading/LoadingScreen";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./Firebase/firebaseInit";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser, setUser } from "./Redux/Actions/authAction";
 
 function App() {
-  const { currentUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
-  const AfterLogIn = ({ children }) => {
-    if (!currentUser) {
-      return <Navigate to="/register" />;
-    }
-    return children;
-  };
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-  const BeforeLogIn = ({ children }) => {
-    if (currentUser) {
-      return <Navigate to="/dashboard" />;
-    }
-    return children;
-  };
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      setLoading(true);
+      const unsubscribe = await onAuthStateChanged(auth, (user) => {
+        if (user) dispatch(setUser(user));
+        else dispatch(clearUser());
+        setLoading(false);
+      });
 
-  console.log(currentUser);
+      return () => unsubscribe();
+    };
 
-  if (currentUser === undefined) {
-    return <LoadingScreen />;
-  }
+    checkAuthStatus();
+  }, [dispatch]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <BrowserRouter>
@@ -39,19 +42,11 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route
           path="/dashboard"
-          element={
-            <AfterLogIn>
-              <Dashboard />
-            </AfterLogIn>
-          }
+          element={user ? <Dashboard /> : <Navigate to="/register" />}
         />
         <Route
           path="/register"
-          element={
-            <BeforeLogIn>
-              <Register />
-            </BeforeLogIn>
-          }
+          element={!user ? <Register /> : <Navigate to="/dashboard" />}
         />
       </Routes>
     </BrowserRouter>

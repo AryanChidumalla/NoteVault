@@ -22,6 +22,7 @@ import useScreenSize from "../../Components/useScreenSize";
 import "./Dashboard.css";
 import styles from "./Dashboard.module.css";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../../Components/NavBar/NavBar";
 
 function Dashboard() {
   // const [showDashboard, setShowDashboard] = useState(false)
@@ -216,141 +217,138 @@ function DashboardDisplay() {
   }
 
   return (
-    <div className="DashboardContainer">
-      <div className="DashboardHeader">
-        <div>
-          <img alt="Logo" src={Logo} />
-          NoteVault
-        </div>
-        <DisplayUserData />
-      </div>
-
-      <div className="NoteContainer">
-        <div className="AddNoteContainer">
-          <div
-            className={`AddNoteComponent ${
-              TextareaOnFocus ? "Visible" : "NotVisible"
-            }`}
-          >
-            <TextareaAutosize
-              placeholder="Title"
-              className={styles.InputTitle}
-              value={Note.title}
-              onChange={(e) => setNote({ ...Note, title: e.target.value })}
-              // rows={1}
-            />
-          </div>
-
-          <div
-            className={`AddNoteComponent Description ${
-              TextareaOnFocus ? "Visible" : "NotVisible"
-            }`}
-          >
-            <TextareaAutosize
-              placeholder="Type here to take note..."
-              className={styles.InputDescription}
-              value={Note.description}
-              onClick={() => {
-                setTextareaOnFocus(true);
-              }}
-              onChange={(e) =>
-                setNote({ ...Note, description: e.target.value })
-              }
-              // rows={TextareaOnFocus ? 12 : 1}
-              maxRows="12"
-            />
-          </div>
-
-          <div
-            className={`AddNoteComponent ${
-              TextareaOnFocus ? "Visible" : "NotVisible"
-            }`}
-          >
-            <button
-              onClick={() => {
-                setTextareaOnFocus(false);
-              }}
+    <>
+      <NavBar />
+      <div className="DashboardContainer">
+        <div className="NoteContainer">
+          <div className="AddNoteContainer">
+            <div
+              className={`AddNoteComponent ${
+                TextareaOnFocus ? "Visible" : "NotVisible"
+              }`}
             >
-              Cancel
-            </button>
-            <button
-              onClick={(e) => {
-                AddNoteToDB(Note);
-                setNote({ title: "", description: "" });
-                setTextareaOnFocus(false);
-                fetchData(setFetchData);
-              }}
+              <TextareaAutosize
+                placeholder="Title"
+                className={styles.InputTitle}
+                value={Note.title}
+                onChange={(e) => setNote({ ...Note, title: e.target.value })}
+                // rows={1}
+              />
+            </div>
+
+            <div
+              className={`AddNoteComponent Description ${
+                TextareaOnFocus ? "Visible" : "NotVisible"
+              }`}
             >
-              Add
-            </button>
-          </div>
-        </div>
-        <div
-          className={`AddNoteContainerBg ${
-            TextareaOnFocus ? "Visible" : "NotVisible"
-          }`}
-          onClick={(e) => {
-            setTextareaOnFocus(false);
-            if (Note.title !== "" || Note.description !== "") {
-              AddNoteToDB(Note);
-              setNote({ title: "", description: "" });
-              fetchData(setFetchData);
-            }
-          }}
-        />
-        <DisplayFetchedData />
-        <div
-          className={`UpdateNoteContainer ${
-            UpdateState ? "Visible" : "NotVisible"
-          }`}
-        >
-          <div
-            className={`UpdateNoteBg ${UpdateState ? "Visible" : "NotVisible"}`}
-            onClick={(e) => {
-              setUpdateState(false);
-            }}
-          />
-          <div className="UpdateNoteSubContainer">
-            <textarea
-              className="Title"
-              value={UpdateValues.Title}
-              onChange={(e) => {
-                setUpdateValues({ ...UpdateValues, Title: e.target.value });
-              }}
-              rows={1}
-            />
-            <textarea
-              value={UpdateValues.Description}
-              onChange={(e) => {
-                setUpdateValues({
-                  ...UpdateValues,
-                  Description: e.target.value,
-                });
-              }}
-              rows={12}
-            />
-            <div className="UpdateNoteButtonContainer">
+              <TextareaAutosize
+                placeholder="Type here to take note..."
+                className={styles.InputDescription}
+                value={Note.description}
+                onClick={() => {
+                  setTextareaOnFocus(true);
+                }}
+                onChange={(e) =>
+                  setNote({ ...Note, description: e.target.value })
+                }
+                // rows={TextareaOnFocus ? 12 : 1}
+                maxRows="12"
+              />
+            </div>
+
+            <div
+              className={`AddNoteComponent ${
+                TextareaOnFocus ? "Visible" : "NotVisible"
+              }`}
+            >
               <button
-                onClick={(e) => {
-                  setUpdateState(false);
+                onClick={() => {
+                  setTextareaOnFocus(false);
                 }}
               >
                 Cancel
               </button>
               <button
                 onClick={(e) => {
-                  UpdateNote(UpdateValues);
+                  AddNoteToDB(Note);
+                  setNote({ title: "", description: "" });
+                  setTextareaOnFocus(false);
                   fetchData(setFetchData);
-                  setUpdateState(false);
                 }}
               >
-                Update
+                Add
               </button>
+            </div>
+          </div>
+          <div
+            className={`AddNoteContainerBg ${
+              TextareaOnFocus ? "Visible" : "NotVisible"
+            }`}
+            onClick={(e) => {
+              setTextareaOnFocus(false);
+              if (Note.title !== "" || Note.description !== "") {
+                AddNoteToDB(Note);
+                setNote({ title: "", description: "" });
+                fetchData(setFetchData);
+              }
+            }}
+          />
+          <DisplayFetchedData />
+          <div
+            className={`UpdateNoteContainer ${
+              UpdateState ? "Visible" : "NotVisible"
+            }`}
+          >
+            <div
+              className={`UpdateNoteBg ${
+                UpdateState ? "Visible" : "NotVisible"
+              }`}
+              onClick={(e) => {
+                setUpdateState(false);
+              }}
+            />
+            <div className="UpdateNoteSubContainer">
+              <textarea
+                className="Title"
+                value={UpdateValues.Title}
+                onChange={(e) => {
+                  setUpdateValues({ ...UpdateValues, Title: e.target.value });
+                }}
+                rows={1}
+              />
+              <textarea
+                value={UpdateValues.Description}
+                onChange={(e) => {
+                  setUpdateValues({
+                    ...UpdateValues,
+                    Description: e.target.value,
+                  });
+                }}
+                rows={12}
+              />
+              <div className="UpdateNoteButtonContainer">
+                <button
+                  onClick={(e) => {
+                    setUpdateState(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={(e) => {
+                    UpdateNote(UpdateValues);
+                    fetchData(setFetchData);
+                    setUpdateState(false);
+                  }}
+                >
+                  Update
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

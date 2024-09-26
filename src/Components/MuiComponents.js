@@ -87,13 +87,14 @@ const ButtonStyle = styled(Button)(() => ({
   },
 }));
 
-export function StyledButton({ label, onClick }) {
+export function StyledButton({ label, onClick, disabled }) {
   return (
     <ButtonStyle
       variant="contained"
       disableElevation
       disableFocusRipple
       disableRipple
+      disabled={disabled}
       onClick={onClick}
     >
       {label}

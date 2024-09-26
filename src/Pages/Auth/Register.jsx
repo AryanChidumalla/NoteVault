@@ -8,6 +8,7 @@ import { StyledButton } from "../../Components/MuiComponents";
 import useScreenSize from "../../Components/useScreenSize";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { signInUser, signUpUser } from "../../Firebase/firebaseComponents";
 
 export default function Register() {
   const [signIn, setSignIn] = useState(true);
@@ -79,72 +80,17 @@ function ForDesktop({ signIn, setSignIn }) {
   );
 }
 
-function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  const handleSignIn = () => {
-    if (!email || !password) {
-      setSnackbarMessage("All fields must be filled out");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setSnackbarMessage("Invalid email format");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if (password.length < 8) {
-      setSnackbarMessage("Password must be at least 8 characters long");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    // Perform sign-in action here
-    console.log("Sign In Successful");
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
-  return (
-    <div className="RegisterFormContainer">
-      <div className="RegisterFormTitle">NoteVaule</div>
-      <StyledTextField label="Email" setItem={setEmail} />
-      <StyledTextFieldPassword label="Password" setItem={setPassword} />
-      <StyledButton label="Sign In" onClick={handleSignIn} />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </div>
-  );
-}
-
 function SignUp() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
+  const handleSignUp = async () => {
+    if (!username || !email || !password || !confirmPassword) {
       setSnackbarMessage("All fields must be filled out");
       setSnackbarOpen(true);
       return;
@@ -168,8 +114,92 @@ function SignUp() {
       return;
     }
 
-    // Perform sign-up action here
-    console.log("Sign Up Successful");
+    setLoading(true);
+    try {
+      await signUpUser(username, email, password);
+      setSnackbarMessage("Sign up successful!");
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Sign up failed, please try again");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  return (
+    <div className="RegisterFormContainer">
+      <div className="RegisterFormTitle">NoteVault</div>
+      <StyledTextField label="Username" setItem={setUsername} />{" "}
+      <StyledTextField label="Email" setItem={setEmail} />
+      <StyledTextFieldPassword label="Password" setItem={setPassword} />
+      <StyledTextFieldPassword
+        label="Confirm Password"
+        setItem={setConfirmPassword}
+      />
+      <StyledButton
+        label={loading ? "Signing Up..." : "Sign Up"}
+        disabled={loading}
+        onClick={handleSignUp}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </div>
+  );
+}
+
+function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      setSnackbarMessage("All fields must be filled out");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setSnackbarMessage("Invalid email format");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (password.length < 8) {
+      setSnackbarMessage("Password must be at least 8 characters long");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await signInUser(email, password);
+      console.log("Sign In Successful");
+    } catch (error) {
+      setSnackbarMessage("Sign in failed, please try again");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -181,11 +211,11 @@ function SignUp() {
       <div className="RegisterFormTitle">NoteVault</div>
       <StyledTextField label="Email" setItem={setEmail} />
       <StyledTextFieldPassword label="Password" setItem={setPassword} />
-      <StyledTextFieldPassword
-        label="Confirm Password"
-        setItem={setConfirmPassword}
+      <StyledButton
+        label={loading ? "Signing In..." : "Sign In"}
+        disabled={loading}
+        onClick={handleSignIn}
       />
-      <StyledButton label="Sign Up" onClick={handleSignUp} />
 
       <Snackbar
         open={snackbarOpen}
@@ -219,15 +249,16 @@ function ForMobile({ signIn, setSignIn }) {
 }
 
 function SignUpFormForMobile({ signIn, setSignIn }) {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
+  const handleSignUp = async () => {
+    if (!username || !email || !password || !confirmPassword) {
       setSnackbarMessage("All fields must be filled out");
       setSnackbarOpen(true);
       return;
@@ -251,8 +282,16 @@ function SignUpFormForMobile({ signIn, setSignIn }) {
       return;
     }
 
-    // Perform sign-up action here
-    console.log("Sign Up Successful");
+    setLoading(true);
+
+    try {
+      await signUpUser(username, email, password);
+    } catch (error) {
+      setSnackbarMessage("Sign up failed, please try again");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -263,13 +302,18 @@ function SignUpFormForMobile({ signIn, setSignIn }) {
     <div
       className={`MobileRegisterSignUpFormContainer ${signIn ? "" : "GoLeft"}`}
     >
+      <StyledTextField label="Username" setItem={setUsername} />
       <StyledTextField label="Email" setItem={setEmail} />
       <StyledTextFieldPassword label="Password" setItem={setPassword} />
       <StyledTextFieldPassword
         label="Confirm Password"
         setItem={setConfirmPassword}
       />
-      <StyledButton label="Sign Up" onClick={handleSignUp} />
+      <StyledButton
+        label={loading ? "Signing Up..." : "Sign Up"}
+        disabled={loading}
+        onClick={handleSignUp}
+      />
       <div className="RegisterFormLinkTo">
         Already have an Account?
         <span onClick={() => setSignIn(false)}>
@@ -296,11 +340,11 @@ function SignUpFormForMobile({ signIn, setSignIn }) {
 function SignInFormForMobile({ signIn, setSignIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (!email || !password) {
       setSnackbarMessage("All fields must be filled out");
       setSnackbarOpen(true);
@@ -319,8 +363,16 @@ function SignInFormForMobile({ signIn, setSignIn }) {
       return;
     }
 
-    // Perform sign-in action here
-    console.log("Sign In Successful");
+    setLoading(true);
+
+    try {
+      await signInUser(email, password);
+    } catch (error) {
+      setSnackbarMessage("Sign in failed, please try again");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -333,7 +385,11 @@ function SignInFormForMobile({ signIn, setSignIn }) {
     >
       <StyledTextField label="Email" setItem={setEmail} />
       <StyledTextFieldPassword label="Password" setItem={setPassword} />
-      <StyledButton label="Sign In" onClick={handleSignIn} />
+      <StyledButton
+        label={loading ? "Signing In..." : "Sign In"}
+        disabled={loading}
+        onClick={handleSignIn}
+      />
       <div className="RegisterFormLinkTo">
         Don't have an Account?
         <span onClick={() => setSignIn(true)}>

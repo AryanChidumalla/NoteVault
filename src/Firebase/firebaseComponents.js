@@ -20,7 +20,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-import { app } from "./firebaseInit";
+import { app, auth } from "./firebaseInit";
 
 const db = getFirestore();
 const colRef = collection(db, "Notes");
@@ -70,39 +70,27 @@ function AddUserToUserDB(username, email, password) {
   });
 }
 
-export function SignInUser(email, password) {
-  const auth = getAuth();
-
-  return new Promise((resolve, reject) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then(function (firebaseUser) {
-        resolve(true);
-      })
-      .catch(function (error) {
-        console.log(error);
-        resolve(false);
-      });
-  });
+export async function signInUser(email, password) {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    return true;
+  } catch (error) {
+    console.error("Sign-in error:", error.message);
+    return false;
+  }
 }
 
-export function CreateUser(username, email, password) {
-  const auth = getAuth();
+export async function signUpUser(username, email, password) {
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(auth.currentUser, { displayName: username });
+    // await AddUserToUserDB(username, email, password);
 
-  return new Promise((resolve, reject) => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(function (firebaseUser) {
-        // console.log(firebaseUser)
-        updateProfile(auth.currentUser, {
-          displayName: username,
-        });
-        AddUserToUserDB(username, email, password);
-        resolve(true);
-      })
-      .catch(function (error) {
-        console.log(error);
-        resolve(false);
-      });
-  });
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
 
 export async function GetUserDataFromDB() {
@@ -127,21 +115,12 @@ export async function GetUserDataFromDB() {
   });
 }
 
-export function LogOutUser() {
-  const auth = getAuth(app);
-
-  return new Promise((resolve, reject) => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        resolve(true);
-      })
-      .catch((error) => {
-        // An error happened.
-        console.error("Error signing out user:", error);
-        resolve(false);
-      });
-  });
+export async function LogOutUser() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Error signing out user:", error);
+  }
 }
 
 export function getUser() {
@@ -211,5 +190,3 @@ export async function DeleteNote(Note) {
     await deleteDoc(docRef);
   }
 }
-
-export default CreateUser;
