@@ -10,6 +10,8 @@ import {
   serverTimestamp,
   query,
   orderBy,
+  getDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -82,15 +84,62 @@ export async function signInUser(email, password) {
 
 export async function signUpUser(username, email, password) {
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(auth.currentUser, { displayName: username });
-    // await AddUserToUserDB(username, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+
+    await updateProfile(user, { displayName: username });
+
+    await setDoc(doc(colRefToUsers, user.uid), {
+      uid: user.uid,
+      username: username,
+      email: email,
+      noteBooks: ["Default"],
+    });
 
     return true;
   } catch (error) {
-    console.error(error);
+    console.error("Error signing up user:", error);
     return false;
   }
+}
+
+// NoteBook Functions
+export async function getUserNoteBooks(setNoteBooks) {
+  // const auth = getAuth();
+  const user = auth.currentUser;
+  const docRef = doc(db, "Users", user.uid);
+  console.log(user.uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const fetchedNoteBooks = docSnap.data().noteBooks;
+
+    // Transform fetched data to match the expected structure
+    const formattedNoteBooks = fetchedNoteBooks.map((name) => ({
+      name,
+      isEditing: false, // Initialize as not editing
+    }));
+
+    setNoteBooks(formattedNoteBooks);
+  } else {
+    console.log("No such document!");
+  }
+}
+
+export async function addNoteBook(notebookName) {
+  const user = auth.currentUser;
+
+  if (!user) return; // Check if user is logged in
+
+  const docRef = doc(db, "Users", user.uid);
+
+  await updateDoc(docRef, {
+    noteBooks: arrayUnion(notebookName), // Add the new notebook name
+  });
 }
 
 export async function GetUserDataFromDB() {

@@ -6,46 +6,31 @@ import {
   GetUserDataFromDB,
   UpdateNote,
   DeleteNote,
-  checkUserStatus,
+  getUserNoteBooks,
 } from "../../Firebase/firebaseComponents";
 import TextareaAutosize from "react-textarea-autosize";
 
-import Logo from "../../img/Logo.svg";
 import ProfileIcon from "../../img/ProfileIcon.svg";
 import ExitBtn from "../../img/ExitBtn.svg";
 import SignOutIcon from "../../img/SignOutIcon.svg";
 import DeleteBtn from "../../img/DeleteBtn.svg";
 
-// import useScreenSize from "./useScreenSize";
 import useScreenSize from "../../Components/useScreenSize";
 
 import "./Dashboard.css";
 import styles from "./Dashboard.module.css";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../Components/NavBar/NavBar";
+import UserNoteBooks from "./UserNoteBooks/UserNoteBooks";
 
 function Dashboard() {
-  // const [showDashboard, setShowDashboard] = useState(false)
-
-  // const navigate = useNavigate()
-
-  // useEffect(() => {
-  //     checkUserStatus().then((isUserSignedIn) => {
-  //         if (isUserSignedIn) {
-  //             setShowDashboard(true)
-  //         } else {
-  //             navigate('/register')
-  //         }
-  //     })
-  // }, [navigate])
-
-  // if (showDashboard) {
-  //     return (
-  //         <DashboardDisplay/>
-  //     )
-  // }
-
-  return <DashboardDisplay />;
+  return (
+    <>
+      <NavBar />
+      <UserNoteBooks />
+    </>
+  );
+  // return <DashboardDisplay />;
 }
 
 function DashboardDisplay() {
@@ -218,7 +203,6 @@ function DashboardDisplay() {
 
   return (
     <>
-      <NavBar />
       <div className="DashboardContainer">
         <div className="NoteContainer">
           <div className="AddNoteContainer">

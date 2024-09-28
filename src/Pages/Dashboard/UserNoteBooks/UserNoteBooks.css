@@ -1,0 +1,68 @@
+.UserNoteBookContainer {
+    padding: 40px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.UserNoteBooks {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto; /* Allow horizontal scrolling */
+    white-space: nowrap; /* Prevent buttons from wrapping to the next line */
+}
+
+/* Hide scrollbar for WebKit browsers */
+.UserNoteBooks::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar */
+}
+
+/* For Firefox */
+.UserNoteBooks {
+    scrollbar-width: none; /* Hides the scrollbar */
+}
+
+/* Button styles */
+.UserNoteBookButton {
+    /* padding: 10px 20px;
+    border-radius: 5px;
+    background-color: var(--light-aqua);
+    color: var(--soft-black);
+    font-size: var(--button-text);
+    font-weight: var(--bold);
+    cursor: pointer; */
+    display: inline-block; /* Change to inline-block for proper layout */
+    /* height: fit-content; */
+    display: flex;
+    align-items: center;
+}
+
+.NoteBookButton {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: var(--light-aqua);
+    color: var(--soft-black);
+    font-size: var(--button-text);
+    font-weight: var(--bold);
+    cursor: pointer;
+    display: inline-block; /* Change to inline-block for proper layout */
+    height: fit-content;
+}
+
+
+.NoteBookButton.selected {
+    background-color: var(--soft-black);
+    color: var(--light-aqua);
+}
+
+input[type="text"] {
+    padding: 10px 20px;
+    border: 2px solid var(--soft-black);
+    border-radius: 5px;
+    font-size: var(--button-text);
+    /* width: 200px; /* Adjust width as needed */
+}
+
+.UserNoteBooksAddButton {
+    margin-left: 20px;
+}
