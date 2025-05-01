@@ -1,0 +1,71 @@
+.DashboardNoteItem {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    break-inside: avoid; 
+    padding: 20px 40px;
+    border-radius: 5px;
+    border: 2px solid var(--black);
+    cursor: pointer;
+    height: fit-content;
+    max-height: 600px;
+    overflow: hidden;         
+    text-overflow: ellipsis;
+}
+
+.DashboardNoteItem:nth-child(1n) {
+    background-color: #FFF5C2;
+}
+
+.DashboardNoteItem:nth-child(2n) {
+    background-color: #FF8F8F;
+}
+
+.DashboardNoteItem:nth-child(3n) {
+    background-color: #87C4FF;
+}
+
+.DashboardNoteItem:nth-child(4n) {
+    background-color: #A6CF98;
+}
+
+.DashboardNoteItem:nth-child(5n) {
+    background-color: #FFC5C5;
+}
+
+  
+
+.DashboardNoteItem {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+  .DashboardNoteItem.enter {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  
+  .DashboardNoteItem.enter-active {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .DashboardNoteItem.exit {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .DashboardNoteItem.exit-active {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+.grid-item {
+    background-color: lightblue;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
