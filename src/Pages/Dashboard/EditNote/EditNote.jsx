@@ -55,7 +55,7 @@ export const EditNote = ({
         } transition-opacity duration-500 ease-in-out z-100`}
       />
       <div
-        className={`fixed top-0 bottom-0 left-[10%] md:left-[50%] lg:left-[60%] transform transition-transform duration-500 ease-in-out flex flex-col gap-10 justify-start items-start bg-SoftTeal border-l-2 border-SoftBlack w-[90%] md:w-[50%] lg:w-[40%] p-10 z-200 ${
+        className={`fixed top-0 bottom-0 left-[10%] md:left-[50%] lg:left-[60%] transform transition-transform duration-500 ease-in-out flex flex-col gap-10 justify-start items-start bg-SoftTeal border-l-2 border-SoftBlack w-[90%] md:w-[50%] lg:w-[40%] p-10 z-20 ${
           editNoteModal ? "translate-x-0" : "translate-x-full"
         }`}
       >
