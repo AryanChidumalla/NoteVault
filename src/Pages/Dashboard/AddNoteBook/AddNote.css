@@ -1,26 +1,26 @@
-.ProfileOverlay {
+.AddNoteContainerOverlay {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: var(--black);
-    opacity: 0; /* Start hidden */
+    opacity: 0; 
     visibility: hidden; 
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
     z-index: 100;
 }
 
-.ProfileOverlay.Visible {
-    opacity: 0.5; /* Show with opacity */
+.AddNoteContainerOverlay.Visible {
+    opacity: 0.5;
     visibility: visible; 
 }
 
-.ProfileSubContainer {
+.AddNoteContainer {
     position: fixed;
     top: 0;
     bottom: 0;
-    left: 70%;
+    left: 50%;
     transform: translateX(-100%);
     display: flex;
     flex-direction: column;
@@ -29,16 +29,16 @@
     align-items: flex-start;
     background-color: var(--teal);
     border-left: 2px solid var(--black);
-    width: 30%;
-    transition: transform 0.5s ease, opacity 0.5s ease; /* Add opacity transition */
+    width: 50%;
+    transition: transform 0.5s ease;
     padding: 40px;
-    z-index: 200;
+    z-index: 150;
 }
 
-.ProfileSubContainer.Visible {
+.AddNoteContainer.Visible {
     transform: translateX(0); 
 }
 
-.ProfileSubContainer.Hidden {
+.AddNoteContainer.Hidden {
     transform: translateX(100%); 
 }

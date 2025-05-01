@@ -1,338 +1,147 @@
 import { useState, useEffect } from "react";
-import {
-  AddNoteToDB,
-  LogOutUser,
-  fetchData,
-  GetUserDataFromDB,
-  UpdateNote,
-  DeleteNote,
-  getUserNoteBooks,
-} from "../../Firebase/firebaseComponents";
-import TextareaAutosize from "react-textarea-autosize";
-
-import ProfileIcon from "../../img/ProfileIcon.svg";
-import ExitBtn from "../../img/ExitBtn.svg";
-import SignOutIcon from "../../img/SignOutIcon.svg";
-import DeleteBtn from "../../img/DeleteBtn.svg";
-
+import "./Dashboard.css";
+import NavBar from "../../Components/NavBar/NavBar";
+import { AddNote } from "./AddNoteBook/AddNote";
+import { font } from "../../Styles/Fonts";
+import { Colors } from "../../Styles/Colors";
+import { Masonry } from "@mui/lab";
+import { EditNote } from "./EditNote/EditNote";
+import { useSelector } from "react-redux";
+import { TransitionGroup } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 import useScreenSize from "../../Components/useScreenSize";
 
-import "./Dashboard.css";
-import styles from "./Dashboard.module.css";
-import { useNavigate } from "react-router-dom";
-import NavBar from "../../Components/NavBar/NavBar";
-import UserNoteBooks from "./UserNoteBooks/UserNoteBooks";
-
 function Dashboard() {
+  const [searchText, setSearchText] = useState("");
   return (
     <>
-      <NavBar />
-      <UserNoteBooks />
+      <NavBar searchText={searchText} setSearchText={setSearchText} />
+      <DashboardDisplay searchText={searchText} />
+      <AddNote searchText={searchText} />
     </>
   );
-  // return <DashboardDisplay />;
 }
+function DashboardDisplay({ searchText }) {
+  const fetchNotes = useSelector((state) => state.notes.notes);
 
-function DashboardDisplay() {
-  const [UserData, setUserData] = useState(null);
-  const [ShowUserData, setShowUserData] = useState(false);
-  const [TextareaOnFocus, setTextareaOnFocus] = useState(false);
-  const [Note, setNote] = useState({ title: "", description: "" });
-  const [FetchData, setFetchData] = useState(null);
-  const [UpdateState, setUpdateState] = useState(false);
-  const [UpdateValues, setUpdateValues] = useState("");
+  const [notes, setNotes] = useState(null);
+  const [editNoteModal, setEditNoteModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [noteId, setNoteId] = useState("");
+
+  const [debouncedSearch, setDebouncedSearch] = useState(searchText);
 
   const screenSize = useScreenSize();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    GetUserDataFromDB()
-      .then(function (result) {
-        if (result !== null) {
-          setUserData(result);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 300); // Adjust delay as needed
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchText]);
+
+  useEffect(() => {
+    setNotes(fetchNotes);
+    if (searchText !== "") {
+      let temp = [];
+      for (let i = 0; i < fetchNotes.length; i++) {
+        if (
+          fetchNotes[i].Title.toLowerCase().includes(
+            searchText.toLowerCase()
+          ) ||
+          fetchNotes[i].Description.toLowerCase().includes(
+            searchText.toLowerCase()
+          )
+        ) {
+          temp.unshift(fetchNotes[i]);
         }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    fetchData(setFetchData);
-  }, []);
-
-  function DisplayFetchedData() {
-    let columnNum;
-
-    let MasonryLayout;
-    let colorClassNameArr;
-
-    if (screenSize.width > 1000) {
-      MasonryLayout = Array.from(Array(4), () => []);
-      colorClassNameArr = Array.from(Array(4), () => []);
-      columnNum = 3;
-    } else if (1000 > screenSize.width && screenSize.width > 800) {
-      MasonryLayout = Array.from(Array(3), () => []);
-      colorClassNameArr = Array.from(Array(3), () => []);
-      columnNum = 2;
-    } else {
-      MasonryLayout = Array.from(Array(2), () => []);
-      colorClassNameArr = Array.from(Array(2), () => []);
-      columnNum = 1;
-    }
-
-    let colorArray = ["yellow", "red", "blue", "green", "pink", "orange"];
-
-    let k = 0;
-    let j = 0;
-
-    if (FetchData !== null) {
-      for (let i = 0; i < FetchData.length; i++, j++, k++) {
-        if (j > 5) j = 0;
-        if (k > columnNum) k = 0;
-
-        MasonryLayout[k].push(FetchData[i]);
-        colorClassNameArr[k].unshift(colorArray[j]);
       }
+      setNotes(temp);
     }
-
-    if (FetchData !== null) {
-      return (
-        <div className={`FetchedDataContainer NumOfColsIs${columnNum + 1}`}>
-          {MasonryLayout.map((columnArr, j) => (
-            <div className="FetchedDataContainerColumn" key={j}>
-              {columnArr.map((obj, i) => (
-                <div
-                  className={`FetchedDataNoteContainer ${colorClassNameArr[j][i]}`}
-                  key={i}
-                >
-                  <div
-                    onClick={(e) => {
-                      setUpdateState(true);
-                      setUpdateValues(obj);
-                    }}
-                  >
-                    <div className="FetchedDataNote Title">{obj.Title}</div>
-                    <div className="FetchedDataNote Description">
-                      {obj.Description}
-                    </div>
-                  </div>
-                  <div className="FetchedDataNoteBtnContainer">
-                    <button
-                      onClick={(e) => {
-                        DeleteNote(obj);
-                        fetchData(setFetchData);
-                      }}
-                    >
-                      <img alt="Delete" src={DeleteBtn} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-
-  function logOutBtnHandler() {
-    LogOutUser().then((bool) => {
-      if (bool) {
-        navigate("/register");
-      }
-    });
-  }
-
-  function DisplayUserData() {
-    if (ShowUserData) {
-      return (
-        <div className="UserDataContainer">
-          <button>
-            <img
-              alt="Profile"
-              src={ProfileIcon}
-              onClick={() => {
-                setShowUserData(true);
-              }}
-            />
-          </button>
-
-          <div className="UserData">
-            <div className="ExitUserData">
-              <button
-                onClick={() => {
-                  setShowUserData(false);
-                }}
-              >
-                <img alt="Exit" src={ExitBtn} />
-              </button>
-            </div>
-            <div className="UserDataSubContainer">
-              <div className="UserDataEmail">{UserData.email}</div>
-              <img alt="Profile" src={ProfileIcon} />
-              <div className="UserDataUsername">Hi {UserData.displayName}!</div>
-              <button className="UserDataLogOutBtn" onClick={logOutBtnHandler}>
-                Log Out <img alt="Log Out" src={SignOutIcon} />
-              </button>
-            </div>
-          </div>
-
-          <div
-            className="UserDataContainerBg"
-            onClick={() => {
-              setShowUserData(false);
-            }}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div className="UserDataContainer">
-          <button>
-            <img
-              alt="Profile"
-              src={ProfileIcon}
-              onClick={() => {
-                setShowUserData(true);
-              }}
-            />
-          </button>
-        </div>
-      );
-    }
-  }
+  }, [searchText, fetchNotes, debouncedSearch]);
 
   return (
-    <>
-      <div className="DashboardContainer">
-        <div className="NoteContainer">
-          <div className="AddNoteContainer">
-            <div
-              className={`AddNoteComponent ${
-                TextareaOnFocus ? "Visible" : "NotVisible"
-              }`}
-            >
-              <TextareaAutosize
-                placeholder="Title"
-                className={styles.InputTitle}
-                value={Note.title}
-                onChange={(e) => setNote({ ...Note, title: e.target.value })}
-                // rows={1}
-              />
-            </div>
-
-            <div
-              className={`AddNoteComponent Description ${
-                TextareaOnFocus ? "Visible" : "NotVisible"
-              }`}
-            >
-              <TextareaAutosize
-                placeholder="Type here to take note..."
-                className={styles.InputDescription}
-                value={Note.description}
-                onClick={() => {
-                  setTextareaOnFocus(true);
-                }}
-                onChange={(e) =>
-                  setNote({ ...Note, description: e.target.value })
-                }
-                // rows={TextareaOnFocus ? 12 : 1}
-                maxRows="12"
-              />
-            </div>
-
-            <div
-              className={`AddNoteComponent ${
-                TextareaOnFocus ? "Visible" : "NotVisible"
-              }`}
-            >
-              <button
-                onClick={() => {
-                  setTextareaOnFocus(false);
+    <div className="p-5 md:p-10 lg:p-20 flex justify-center">
+      {notes && notes.length > 0 ? (
+        <Masonry
+          columns={screenSize.width > 1100 ? 3 : screenSize.width > 600 ? 2 : 1}
+          spacing={4}
+        >
+          <TransitionGroup component={null}>
+            {notes.map((note, index) => (
+              <CSSTransition
+                key={note.NoteId}
+                timeout={300}
+                classNames={{
+                  enter: "enter",
+                  enterActive: "enter-active",
+                  exit: "exit",
+                  exitActive: "exit-active",
                 }}
               >
-                Cancel
-              </button>
-              <button
-                onClick={(e) => {
-                  AddNoteToDB(Note);
-                  setNote({ title: "", description: "" });
-                  setTextareaOnFocus(false);
-                  fetchData(setFetchData);
-                }}
-              >
-                Add
-              </button>
-            </div>
+                <div
+                  className="DashboardNoteItem"
+                  onClick={() => {
+                    setEditNoteModal(true);
+                    setTitle(note.Title);
+                    setDescription(note.Description);
+                    setNoteId(note.NoteId);
+                  }}
+                >
+                  <div style={{ ...font.BoldMedium, color: Colors.Black }}>
+                    {note.Title}
+                  </div>
+                  <div style={{ ...font.RegularSmall, color: Colors.Black }}>
+                    {note.Description}
+                  </div>
+                </div>
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
+        </Masonry>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ ...font.BoldMedium, color: Colors.Black }}>
+            {searchText === "" ? (
+              <div> No Notes Yet!</div>
+            ) : (
+              <div>No Notes Found!</div>
+            )}
           </div>
-          <div
-            className={`AddNoteContainerBg ${
-              TextareaOnFocus ? "Visible" : "NotVisible"
-            }`}
-            onClick={(e) => {
-              setTextareaOnFocus(false);
-              if (Note.title !== "" || Note.description !== "") {
-                AddNoteToDB(Note);
-                setNote({ title: "", description: "" });
-                fetchData(setFetchData);
-              }
-            }}
-          />
-          <DisplayFetchedData />
-          <div
-            className={`UpdateNoteContainer ${
-              UpdateState ? "Visible" : "NotVisible"
-            }`}
-          >
-            <div
-              className={`UpdateNoteBg ${
-                UpdateState ? "Visible" : "NotVisible"
-              }`}
-              onClick={(e) => {
-                setUpdateState(false);
-              }}
-            />
-            <div className="UpdateNoteSubContainer">
-              <textarea
-                className="Title"
-                value={UpdateValues.Title}
-                onChange={(e) => {
-                  setUpdateValues({ ...UpdateValues, Title: e.target.value });
-                }}
-                rows={1}
-              />
-              <textarea
-                value={UpdateValues.Description}
-                onChange={(e) => {
-                  setUpdateValues({
-                    ...UpdateValues,
-                    Description: e.target.value,
-                  });
-                }}
-                rows={12}
-              />
-              <div className="UpdateNoteButtonContainer">
-                <button
-                  onClick={(e) => {
-                    setUpdateState(false);
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={(e) => {
-                    UpdateNote(UpdateValues);
-                    fetchData(setFetchData);
-                    setUpdateState(false);
-                  }}
-                >
-                  Update
-                </button>
+          <div style={{ ...font.RegularSmall, color: Colors.Black }}>
+            {searchText === "" ? (
+              <div>
+                It looks like you haven't created any notes. Start capturing
+                your thoughts, ideas, and important information today!
               </div>
-            </div>
+            ) : (
+              <div>
+                It appears that we currently don’t have any notes containing the
+                information you’re looking for.
+              </div>
+            )}
           </div>
         </div>
-      </div>
-    </>
+      )}
+      <EditNote
+        editNoteModal={editNoteModal}
+        setEditNoteModal={setEditNoteModal}
+        title={title}
+        description={description}
+        noteId={noteId}
+      />
+    </div>
   );
 }
 

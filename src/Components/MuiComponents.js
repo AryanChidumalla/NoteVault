@@ -1,6 +1,5 @@
 import {
   Button,
-  colors,
   IconButton,
   InputAdornment,
   styled,
@@ -12,6 +11,7 @@ import { useState } from "react";
 const TextFieldStyle = styled(TextField)(() => ({
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
+      border: "2px solid #323232",
       borderRadius: "5px",
     },
     "&.Mui-focused fieldset": {
@@ -21,10 +21,16 @@ const TextFieldStyle = styled(TextField)(() => ({
       fontFamily: "Poppins, sans-serif",
       fontWeight: 400,
       fontSize: "14px",
+      border: "none",
     },
+  },
+  "& .MuiInputLabel-root": {
+    color: "#323232",
+    backgroundColor: "#F8FAFC",
   },
   "& .MuiInputLabel-root.Mui-focused": {
     color: "#323232",
+    backgroundColor: "#F8FAFC",
   },
 }));
 
@@ -43,7 +49,6 @@ export const StyledTextField = ({ label, setItem }) => {
 
 export const StyledTextFieldPassword = ({ label, setItem }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -80,11 +85,11 @@ const ButtonStyle = styled(Button)(() => ({
   fontSize: "14px",
   fontFamily: "Poppins",
   border: "2px solid #323232",
-  "&:hover": {
-    backgroundColor: "#9ef2eb",
-    color: "#323232",
-    boxShadow: "none",
-  },
+  // "&:hover": {
+  //   backgroundColor: "#9ef2eb",
+  //   color: "#323232",
+  //   boxShadow: "none",
+  // },
 }));
 
 export function StyledButton({ label, onClick, disabled }) {

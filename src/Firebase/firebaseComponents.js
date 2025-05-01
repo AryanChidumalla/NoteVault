@@ -1,7 +1,6 @@
 import {
   getFirestore,
   collection,
-  addDoc,
   getDocs,
   setDoc,
   doc,
@@ -12,6 +11,7 @@ import {
   orderBy,
   getDoc,
   arrayUnion,
+  onSnapshot,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -23,6 +23,7 @@ import {
 } from "firebase/auth";
 
 import { app, auth } from "./firebaseInit";
+import { setNotes } from "../Redux/Reducers/NotesReducer";
 
 const db = getFirestore();
 const colRef = collection(db, "Notes");
@@ -56,19 +57,6 @@ export function checkUserStatus() {
         resolve(false);
       }
     });
-  });
-}
-
-function AddUserToUserDB(username, email, password) {
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const UUID = user.uid;
-
-  addDoc(colRefToUsers, {
-    uuid: UUID,
-    username: username,
-    email: email,
-    password: password,
   });
 }
 
@@ -183,24 +171,41 @@ export function getUser() {
   });
 }
 
-export async function fetchData(setFetchData) {
+export async function fetchData() {
   let temp = [];
 
   const auth = getAuth(app);
   const user = auth.currentUser;
-  //   const UUID = user.uid;
+  const UUID = user.uid;
   const q = await query(colRef, "Notes", orderBy("CreatedAt"));
   const data = await getDocs(q);
   const dataSnapShot = data.docs;
 
   for (var i in dataSnapShot) {
     const doc = dataSnapShot[i].data();
-    // if (doc.UUID === UUID) {
-    //   temp.unshift(doc);
-    // }
+    if (doc.UUID === UUID) {
+      temp.unshift(doc);
+    }
   }
 
-  setFetchData(temp);
+  return temp;
+}
+
+export async function fetchNotes(userId, dispatch) {
+  let temp = [];
+
+  const q = await query(colRef, "Notes", orderBy("CreatedAt"));
+  const data = await getDocs(q);
+  const dataSnapShot = data.docs;
+
+  for (var i in dataSnapShot) {
+    const doc = dataSnapShot[i].data();
+    if (doc.UUID === userId) {
+      temp.unshift(doc);
+    }
+  }
+
+  dispatch(setNotes(temp));
 }
 
 export async function AddNoteToDB(Note) {
@@ -211,31 +216,37 @@ export async function AddNoteToDB(Note) {
   const newDocRef = doc(colRef);
   await setDoc(newDocRef, {
     UUID: UUID,
+    NoteId: newDocRef.id,
     Title: Note.title,
     Description: Note.description,
     CreatedAt: serverTimestamp(),
   });
-
-  const docRef = doc(db, "Notes", newDocRef.id);
-
-  // await updateDoc(docRef, {
-  //     Id: newDocRef.id
-  // })
 }
 
-export async function UpdateNote(UpdateValues) {
-  const docRef = doc(db, "Notes", UpdateValues.Id);
+export async function UpdateNote(updatedNote) {
+  const docRef = doc(db, "Notes", updatedNote.id);
 
   await updateDoc(docRef, {
-    Title: UpdateValues.Title,
-    Description: UpdateValues.Description,
+    Title: updatedNote.title,
+    Description: updatedNote.description,
     CreatedAt: serverTimestamp(),
   });
 }
 
-export async function DeleteNote(Note) {
-  const docRef = doc(db, "Notes", Note.Id);
-  if (Note.Id !== undefined) {
+export async function DeleteNote(NoteId) {
+  const docRef = doc(db, "Notes", NoteId);
+  if (NoteId !== undefined) {
     await deleteDoc(docRef);
   }
 }
+
+export const listenForChangesInNotes = (userId, dispatch) => {
+  const colRef = collection(db, "Notes");
+
+  onSnapshot(colRef, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      const noteData = { id: change.doc.id, ...change.doc.data() };
+      if (noteData.UUID === userId) fetchNotes(userId, dispatch);
+    });
+  });
+};

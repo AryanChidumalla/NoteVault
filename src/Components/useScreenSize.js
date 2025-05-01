@@ -1,28 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const useScreenSize = () => {
-  const [screenSize, setScreenSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+function useScreenSize() {
+  const getSize = () => ({
+    width: window.visualViewport
+      ? window.visualViewport.width
+      : window.innerWidth,
+    height: window.visualViewport
+      ? window.visualViewport.height
+      : window.innerHeight,
   });
 
+  const [size, setSize] = useState(getSize());
+
   useEffect(() => {
-    const handleResize = () => {
-      setScreenSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Clean up the event listener when the component unmounts
+    const handleResize = () => setSize(getSize());
+    window.addEventListener("resize", handleResize);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleResize);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleResize);
+      }
     };
   }, []);
 
-  return screenSize;
-};
+  return size;
+}
 
 export default useScreenSize;
